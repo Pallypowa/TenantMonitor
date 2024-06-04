@@ -23,5 +23,4 @@ public class PropertyDTO {
     private boolean isFree;
     private boolean isFurnished;
     private String propertyType;
-
 }

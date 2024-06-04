@@ -24,6 +24,8 @@ public class PropertyService {
     }
 
     public void createProperty(PropertyDTO property) {
+        UUID tenantId = UUID.randomUUID();
+        property.setId(tenantId);
         properties.add(property);
     }
 
