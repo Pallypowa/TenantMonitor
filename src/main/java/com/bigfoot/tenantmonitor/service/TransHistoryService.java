@@ -1,6 +1,5 @@
 package com.bigfoot.tenantmonitor.service;
 
-import com.bigfoot.tenantmonitor.dto.TenantDTO;
 import com.bigfoot.tenantmonitor.dto.TransHistoryDTO;
 import org.springframework.stereotype.Service;
 

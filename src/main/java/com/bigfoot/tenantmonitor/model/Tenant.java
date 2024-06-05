@@ -1,10 +1,8 @@
 package com.bigfoot.tenantmonitor.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -15,4 +13,9 @@ public class Tenant {
     private String name;
     private String email;
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "tenant")
+    private List<TransactionHistory> transactionHistories;
+    @OneToOne(mappedBy = "tenant")
+    private Property property;
 }

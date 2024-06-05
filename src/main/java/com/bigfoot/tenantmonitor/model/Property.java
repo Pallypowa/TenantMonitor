@@ -1,12 +1,10 @@
 package com.bigfoot.tenantmonitor.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -16,8 +14,14 @@ public class Property {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private UUID ownerId;
-    private UUID tenantId;
+    @ManyToOne
+    @JoinColumn(name = "ownerId")
+    private Owner owner;
+    @OneToMany(mappedBy = "property")
+    private List<TransactionHistory> transactionHistories;
+    @OneToOne
+    @JoinColumn(name = "tenantId")
+    private Tenant tenant;
     private String name;
     private int zipcode;
     private String street;
@@ -28,4 +32,5 @@ public class Property {
     private boolean isFree;
     private boolean isFurnished;
     private String propertyType;
+
 }

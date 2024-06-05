@@ -1,9 +1,6 @@
 package com.bigfoot.tenantmonitor.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,8 +10,12 @@ public class TransactionHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private UUID propertyId;
-    private UUID tenantId;
     private int amount;
     private LocalDateTime createdAt;
+    @ManyToOne
+    @JoinColumn(name = "property")
+    private Property property;
+    @ManyToOne
+    @JoinColumn(name = "tenant")
+    private Tenant tenant;
 }
