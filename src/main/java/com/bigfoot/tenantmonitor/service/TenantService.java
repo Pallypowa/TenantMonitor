@@ -1,47 +1,60 @@
 package com.bigfoot.tenantmonitor.service;
 
 import com.bigfoot.tenantmonitor.dto.TenantDTO;
+import com.bigfoot.tenantmonitor.model.Tenant;
+import com.bigfoot.tenantmonitor.repository.TenantRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 public class TenantService {
+    private final TenantRepository tenantRepository;
+    private final ModelMapper modelMapper;
 
-    private final List<TenantDTO> tenants = new ArrayList<>();
+    public TenantService(TenantRepository tenantRepository, ModelMapper modelMapper) {
+        this.tenantRepository = tenantRepository;
+        this.modelMapper = modelMapper;
+    }
 
     public List<TenantDTO> fetchAllTenants() {
-        return tenants;
+        return tenantRepository
+                .findAll()
+                .stream()
+                .map(tenant -> modelMapper.map(tenant, TenantDTO.class))
+                .toList();
     }
 
     public TenantDTO fetchTenantById(UUID tenantId) {
-        return tenants.stream()
-                .filter(tenant -> tenant.getId().equals(tenantId))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Tenant not found"));
+        return modelMapper.map(tenantRepository
+                .findById(tenantId)
+                .orElseThrow(() -> new RuntimeException("Tenant has not been found!")), TenantDTO.class);
     }
 
     public void createTenant(TenantDTO tenant) {
-        UUID tenantId = UUID.randomUUID();
-        tenant.setId(tenantId);
-        tenants.add(tenant);
+        tenantRepository.save(modelMapper.map(tenant, Tenant.class));
     }
 
     public TenantDTO updateTenant(UUID tenantId, TenantDTO updatedTenant) {
-        for (int i = 0; i < tenants.size(); i++) {
-            if (tenants.get(i).getId().equals(tenantId)) {
-                updatedTenant.setId(tenantId);
-                tenants.set(i, updatedTenant);
-                return updatedTenant;
-            }
+        Optional<Tenant> existingTenant = tenantRepository.findById(tenantId);
+
+        if(existingTenant.isEmpty()){
+            throw new RuntimeException("Tenant has not been found!");
         }
-        throw new RuntimeException("Tenant not found");
+
+        updatedTenant.setId(tenantId);
+        tenantRepository.save(modelMapper.map(updatedTenant, Tenant.class));
+        return updatedTenant;
     }
 
     public void deleteTenant(UUID tenantId) {
-        boolean removed = tenants.removeIf(tenant -> tenant.getId().equals(tenantId));
-        if (!removed) {
-            throw new RuntimeException("Tenant not found");
+        Optional<Tenant> existingTenant = tenantRepository.findById(tenantId);
+
+        if(existingTenant.isEmpty()){
+            throw new RuntimeException("Tenant has not been found!");
         }
+
+        tenantRepository.delete(modelMapper.map(existingTenant, Tenant.class));
     }
 }

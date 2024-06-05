@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Setter
 @Getter
+@Setter
 public class Property {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
