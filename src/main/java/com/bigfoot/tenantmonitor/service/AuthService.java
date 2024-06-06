@@ -2,26 +2,48 @@ package com.bigfoot.tenantmonitor.service;
 
 import com.bigfoot.tenantmonitor.dto.LoginDTO;
 import com.bigfoot.tenantmonitor.dto.RegistrationDTO;
+import com.bigfoot.tenantmonitor.model.Owner;
+import com.bigfoot.tenantmonitor.repository.OwnerRepository;
+import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AuthService {
-    private final List<RegistrationDTO> registeredUsers = new ArrayList<>();
+    private final OwnerRepository ownerRepository;
+    private final ModelMapper modelMapper;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public void register(RegistrationDTO registrationDTO){
-        registeredUsers.add(registrationDTO);
+    public AuthService(OwnerRepository ownerRepository, ModelMapper modelMapper, BCryptPasswordEncoder passwordEncoder) {
+        this.ownerRepository = ownerRepository;
+        this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
     }
+    public void register(RegistrationDTO registrationDTO){
+        Optional<Owner> user = ownerRepository.findByUserNameOrEmail(registrationDTO.getUserName(), registrationDTO.getEmail());
+        if(user.isPresent()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists!");
+        }
+        Owner owner = modelMapper.map(registrationDTO, Owner.class);
+        owner.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
+        ownerRepository.save(owner);
 
+    }
     public String login(LoginDTO loginDTO){
-        if(registeredUsers
-                .stream()
-                .anyMatch( user ->
-                        user.getUserName().equals(loginDTO.getUserName()) && user.getPassword().equals(loginDTO.getPassword()))){
+        Optional<Owner> user = ownerRepository.findByUserName(loginDTO.getUserName());
+
+        if(user.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist!");
+        }
+
+        if(passwordEncoder.matches(loginDTO.getPassword(), user.get().getPassword())){
             return "SUPER_SECRET_JWT";
         }
-        throw new RuntimeException("Login failed");
+
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect password!");
     }
 }
