@@ -21,5 +21,5 @@ public class TransactionHistory {
     private Property property;
     @ManyToOne
     @JoinColumn(name = "tenant_id")
-    private Tenant tenant;
+    private User tenant;
 }

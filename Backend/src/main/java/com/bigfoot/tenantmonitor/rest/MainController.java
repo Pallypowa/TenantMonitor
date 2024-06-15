@@ -1,7 +1,8 @@
 package com.bigfoot.tenantmonitor.rest;
 
 import com.bigfoot.tenantmonitor.dto.PropertyDTO;
-import com.bigfoot.tenantmonitor.service.PropertyService;
+import com.bigfoot.tenantmonitor.dto.TenantDTO;
+import com.bigfoot.tenantmonitor.service.MainService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,12 +11,11 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(PropertyController.API_ENDPOINT)
-public class PropertyController {
-    public static final String API_ENDPOINT = "/api/v1/property";
-    private final PropertyService propertyService;
+@RequestMapping("/api/v1/property")
+public class MainController {
+    private final MainService propertyService;
 
-    public PropertyController(PropertyService propertyService) {
+    public MainController(MainService propertyService) {
         this.propertyService = propertyService;
     }
 
@@ -24,15 +24,10 @@ public class PropertyController {
         return ResponseEntity.ok(propertyService.fetchAllProperties());
     }
 
-    @GetMapping("/{propertyId}")
-    public ResponseEntity<PropertyDTO> fetchById(@PathVariable UUID propertyId){
-        return ResponseEntity.ok(propertyService.fetchPropertyById(propertyId));
-    }
-
     @PostMapping
     public ResponseEntity<Void> createProperty(@RequestBody PropertyDTO property){
         propertyService.createProperty(property);
-        return ResponseEntity.created(URI.create(API_ENDPOINT)).build();
+        return ResponseEntity.created(URI.create("/api/v1/property")).build();
     }
 
     @PatchMapping("/{propertyId}")
@@ -41,10 +36,15 @@ public class PropertyController {
         return ResponseEntity.ok(updatedProperty);
     }
 
-    @DeleteMapping("{propertyId}")
+    @DeleteMapping("/{propertyId}")
     public ResponseEntity<Void> deleteProperty(@PathVariable UUID propertyId){
         propertyService.deleteProperty(propertyId);
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/{propertyId}/tenant")
+    public ResponseEntity<Void> createTenant(@PathVariable UUID propertyId, @RequestBody TenantDTO tenant){
+        propertyService.createTenant(propertyId, tenant);
+        return ResponseEntity.created(URI.create("/api/v1/property")).build();
+    }
 }

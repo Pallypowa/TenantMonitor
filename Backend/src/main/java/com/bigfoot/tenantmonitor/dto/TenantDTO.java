@@ -11,11 +11,8 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 public class TenantDTO {
-    private UUID id;
     private String firstName;
     private String lastName;
     private String email;
     private String phoneNumber;
-    private LocalDate leaseStartDate;
-    private LocalDate leaseEndDate;
 }

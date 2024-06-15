@@ -16,12 +16,12 @@ public class Property {
     private UUID id;
     @ManyToOne
     @JoinColumn(name = "ownerId")
-    private Owner owner;
+    private User owner;
     @OneToMany(mappedBy = "property")
     private List<TransactionHistory> transactionHistories;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "tenantId")
-    private Tenant tenant;
+    private User tenant;
     private String name;
     private int zipcode;
     private String street;
@@ -29,7 +29,6 @@ public class Property {
     private int storey;
     private int houseNumber;
     private int price;
-    private boolean isFree;
     private boolean isFurnished;
     private String propertyType;
 
