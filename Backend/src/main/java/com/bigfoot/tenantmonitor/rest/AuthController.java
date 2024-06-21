@@ -1,6 +1,6 @@
 package com.bigfoot.tenantmonitor.rest;
 
-import com.bigfoot.tenantmonitor.dto.JwtDTO;
+import com.bigfoot.tenantmonitor.dto.AccessTokenDTO;
 import com.bigfoot.tenantmonitor.dto.LoginDTO;
 import com.bigfoot.tenantmonitor.dto.RegistrationDTO;
 import com.bigfoot.tenantmonitor.service.AuthService;
@@ -21,14 +21,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtDTO> login(@RequestBody LoginDTO loginDTO){
+    public ResponseEntity<AccessTokenDTO> login(@RequestBody LoginDTO loginDTO){
         try {
-            String jwt = authService.login(loginDTO);
-            JwtDTO jwtDTO = new JwtDTO();
-            jwtDTO.setAccessToken(jwt);
-            jwtDTO.setTokenType("Bearer");
-            jwtDTO.setExpiresIn(31600);
-            return ResponseEntity.ok(jwtDTO);
+            AccessTokenDTO accessToken = authService.login(loginDTO);
+            return ResponseEntity.ok(accessToken);
         }catch (RuntimeException ex){
             return ResponseEntity.badRequest().build();
         }
