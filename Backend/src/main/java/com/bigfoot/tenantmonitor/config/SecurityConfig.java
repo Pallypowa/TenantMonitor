@@ -27,7 +27,8 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/api/v1/login",
-            "/api/v1/register"
+            "/api/v1/register",
+            "**" //TODO: figure out how does this work with vaadin
     };
     // other public endpoints of your API may be appended to this array
 
