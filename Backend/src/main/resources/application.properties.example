@@ -1,0 +1,18 @@
+spring.application.name=TenantMonitor
+
+#Database configs
+spring.datasource.url=jdbc:mariadb://host:port/database_name
+spring.datasource.username=username
+spring.datasource.password=password
+spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
+
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=update
+
+spring.sql.init.mode=always
+spring.jpa.defer-datasource-initialization=true
+
+#Security
+application.security.jwt.secret-key = jwtSecretKey
+#1h in ms
+application.security.jwt.expiration-time=3600000
