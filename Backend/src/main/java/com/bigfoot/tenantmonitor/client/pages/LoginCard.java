@@ -5,11 +5,10 @@ import com.bigfoot.tenantmonitor.dto.LoginDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.PasswordField;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
 import java.io.*;
@@ -18,33 +17,36 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 @Route(value = "login", layout = BaseLayout.class)
-public class LoginCard extends VerticalLayout {
+public class LoginCard extends Div {
     public LoginCard() {
-        // Add a header
-        H1 header = new H1("Login");
 
-        // Create input fields
-        TextField usernameField = new TextField("Username");
-        PasswordField passwordField = new PasswordField("Password");
-
-        // Create login button
-        Button loginButton = new Button("Login");
-        loginButton.addClickListener(e -> {
+        LoginOverlay loginOverlay = new LoginOverlay();
+        loginOverlay.addLoginListener(e -> {
             LoginDTO loginDTO = new LoginDTO();
-            loginDTO.setUserName(usernameField.getValue());
-            loginDTO.setPassword(passwordField.getValue());
+            loginDTO.setUserName(e.getUsername());
+            loginDTO.setPassword(e.getPassword());
 
             if (authenticate(loginDTO)) {
                 Notification.show("Login successful!");
                 // Navigate to main view or another view after successful login
                 UI.getCurrent().navigate("");
+                loginOverlay.close();
             } else {
-                Notification.show("Invalid username or password", 3000, Notification.Position.TOP_END);
+                loginOverlay.showErrorMessage("Incorrect username or password", "Please try again");
             }
+
+            loginOverlay.setEnabled(true);
         });
 
-        // Add components to the layout
-        add(header, usernameField, passwordField, loginButton);
+        loginOverlay.setTitle(new LoginCardHeader("Tenant Monitor", event -> loginOverlay.setOpened(false)));
+        loginOverlay.setDescription("Please Log in to continue");
+
+        add(loginOverlay);
+
+        Button login = new Button("Log in");
+        login.addClickListener(event -> loginOverlay.setOpened(true));
+        login.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        add(login);
     }
 
     // Raw dogging sending a request to with both the sender and receiver being the same
