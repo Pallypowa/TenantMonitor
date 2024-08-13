@@ -1,6 +1,5 @@
 package com.bigfoot.tenantmonitor.client.pages;
 
-import com.bigfoot.tenantmonitor.client.layout.BaseLayout;
 import com.bigfoot.tenantmonitor.dto.LoginDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.UI;
@@ -9,18 +8,15 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.router.Route;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-@Route(value = "login", layout = BaseLayout.class)
 public class LoginCard extends Div {
-    public LoginCard() {
-
-        LoginOverlay loginOverlay = new LoginOverlay();
+    // The ide will complain about not being able to autowire the LoginOverlay, but it's fine
+    public LoginCard(LoginOverlay loginOverlay) {
         loginOverlay.addLoginListener(e -> {
             LoginDTO loginDTO = new LoginDTO();
             loginDTO.setUserName(e.getUsername());
@@ -40,6 +36,10 @@ public class LoginCard extends Div {
 
         loginOverlay.setTitle(new LoginCardHeader("Tenant Monitor", event -> loginOverlay.setOpened(false)));
         loginOverlay.setDescription("Please Log in to continue");
+
+        loginOverlay.addForgotPasswordListener(e -> {
+            Notification.show("Forgot password not implemented yet");
+        });
 
         add(loginOverlay);
 
