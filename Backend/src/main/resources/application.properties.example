@@ -16,3 +16,10 @@ spring.jpa.defer-datasource-initialization=true
 application.security.jwt.secret-key = jwtSecretKey
 #1h in ms
 application.security.jwt.expiration-time=3600000
+
+application.backend.url=http://localhost:8080
+  
+  #15 min in ms
+application.security.jwt.access_token_expiration=900000
+  #3 days in ms
+application.security.jwt.refresh_token_expiration=259200000
