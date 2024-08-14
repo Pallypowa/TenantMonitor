@@ -24,4 +24,24 @@ public class PropertyDTO {
     private boolean isFurnished;
     private String propertyType;
     private TenantDTO tenant;
+
+    @Override
+    public String toString() {
+        return "PropertyDTO{" +
+                "id=" + id +
+                ", ownerId=" + ownerId +
+                ", tenantId=" + tenantId +
+                ", name='" + name + '\'' +
+                ", zipcode=" + zipcode +
+                ", street='" + street + '\'' +
+                ", size=" + size +
+                ", storey=" + storey +
+                ", houseNumber=" + houseNumber +
+                ", price=" + price +
+                ", isFree=" + isFree +
+                ", isFurnished=" + isFurnished +
+                ", propertyType='" + propertyType + '\'' +
+                ", tenant=" + tenant +
+                '}';
+    }
 }

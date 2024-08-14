@@ -1,5 +1,6 @@
 package com.bigfoot.tenantmonitor.client.pages;
 
+import com.bigfoot.tenantmonitor.client.BackendService;
 import com.bigfoot.tenantmonitor.client.layout.BaseLayout;
 import com.bigfoot.tenantmonitor.dto.RegistrationDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,16 +13,15 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import io.micrometer.common.util.StringUtils;
 
 @Route(value = "signup", layout = BaseLayout.class)
 public class SignUpCard extends VerticalLayout {
-    public SignUpCard() {
+    private final ObjectMapper objectMapper;
+    private final BackendService backendService;
+    public SignUpCard(ObjectMapper objectMapper, BackendService backendService) {
+        this.objectMapper = objectMapper;
+        this.backendService = backendService;
         // Add a header
         H1 header = new H1("Sign Up");
 
@@ -42,7 +42,8 @@ public class SignUpCard extends VerticalLayout {
             registrationDTO.setUserName(usernameField.getValue());
             registrationDTO.setPassword(passwordField.getValue());
 
-            if (register(registrationDTO)) {
+
+            if (backendService.register(registrationDTO)) {
                 Notification.show("Registration successful! Please log in.");
                 // Navigate to login view or another view after successful registration
                 UI.getCurrent().navigate("login");
@@ -56,39 +57,38 @@ public class SignUpCard extends VerticalLayout {
     }
 
     // Registration method
-    private boolean register(RegistrationDTO registrationDTO) {
-        try {
-            // Create URL
-            URL url = new URL("http://localhost:8080/api/v1/register");
-
-            // Create connection
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
-
-            // Create JSON body
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jsonInputString = objectMapper.writeValueAsString(registrationDTO);
-
-            // Write JSON body to request
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-
-            // Read the response
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
-                // Registration successful (204 No Content)
-                return true;
-            } else {
-                // Handle error response
-                return false;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+//    private boolean register(RegistrationDTO registrationDTO) {
+//        try {
+//            // Create URL
+//            URL url = new URL("http://localhost:8080/api/v1/register");
+//
+//            // Create connection
+//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//            connection.setRequestMethod("POST");
+//            connection.setRequestProperty("Content-Type", "application/json");
+//            connection.setDoOutput(true);
+//
+//            // Create JSON body
+//            String jsonInputString = objectMapper.writeValueAsString(registrationDTO);
+//
+//            // Write JSON body to request
+//            try (OutputStream os = connection.getOutputStream()) {
+//                byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
+//                os.write(input, 0, input.length);
+//            }
+//
+//            // Read the response
+//            int responseCode = connection.getResponseCode();
+//            if (responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
+//                // Registration successful (204 No Content)
+//                return true;
+//            } else {
+//                // Handle error response
+//                return false;
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 }

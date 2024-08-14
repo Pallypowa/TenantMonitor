@@ -1,6 +1,9 @@
 package com.bigfoot.tenantmonitor.client.pages;
 
+import com.bigfoot.tenantmonitor.client.BackendService;
+import com.bigfoot.tenantmonitor.client.jwt.JwtStore;
 import com.bigfoot.tenantmonitor.client.layout.BaseLayout;
+import com.bigfoot.tenantmonitor.dto.TokenDTO;
 import com.bigfoot.tenantmonitor.dto.LoginDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.UI;
@@ -19,7 +22,9 @@ import java.nio.charset.StandardCharsets;
 
 @Route(value = "login", layout = BaseLayout.class)
 public class LoginCard extends VerticalLayout {
-    public LoginCard() {
+    private final BackendService backendService;
+    public LoginCard(BackendService backendService) {
+        this.backendService = backendService;
         // Add a header
         H1 header = new H1("Login");
 
@@ -34,7 +39,7 @@ public class LoginCard extends VerticalLayout {
             loginDTO.setUserName(usernameField.getValue());
             loginDTO.setPassword(passwordField.getValue());
 
-            if (authenticate(loginDTO)) {
+            if (backendService.authenticate(loginDTO)) {
                 Notification.show("Login successful!");
                 // Navigate to main view or another view after successful login
                 UI.getCurrent().navigate("");
@@ -80,10 +85,9 @@ public class LoginCard extends VerticalLayout {
                     while ((responseLine = br.readLine()) != null) {
                         response.append(responseLine.trim());
                     }
-                    // Assuming the response contains an AccessTokenDTO in JSON format
-                    //AccessTokenDTO uses builder, so you can't use the default constructor
-                    //AccessTokenDTO accessTokenDTO = objectMapper.readValue(response.toString(), AccessTokenDTO.class);
-                    // You can save the token or use it as needed
+
+                    TokenDTO accessTokenDTO = objectMapper.readValue(response.toString(), TokenDTO.class);
+                    JwtStore.setAccessToken(accessTokenDTO.getAccessToken()); //Store JWT
                     return true;
                 }
             } else {
