@@ -3,6 +3,7 @@ package com.bigfoot.tenantmonitor.client;
 import com.bigfoot.tenantmonitor.client.jwt.JwtInterceptor;
 import com.bigfoot.tenantmonitor.client.jwt.JwtTokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vaadin.flow.component.login.LoginOverlay;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,5 +36,15 @@ public class ClientConfig {
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
+    }
+
+    @Bean(name = "loginOverlay")
+    public LoginOverlay loginOverlay() {
+        return new LoginOverlay();
+    }
+
+    @Bean(name = "signUpOverlay")
+    public LoginOverlay signUpOverlay() {
+        return new LoginOverlay();
     }
 }
