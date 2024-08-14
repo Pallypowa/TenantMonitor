@@ -2,7 +2,6 @@ package com.bigfoot.tenantmonitor.client.pages;
 
 import com.bigfoot.tenantmonitor.client.BackendService;
 import com.bigfoot.tenantmonitor.dto.RegistrationDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -12,20 +11,20 @@ import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-
+@Component
 public class SignUpCard extends Div {
     private final BackendService backendService;
+    private final LoginOverlay signUpOverlay;
+    private final LoginOverlay loginOverlay;
 
     // The ide will complain about not being able to autowire the LoginOverlay, but it's fine
-    public SignUpCard(LoginOverlay signUpOverlay, LoginOverlay loginOverlay, BackendService backendService) {
+    public SignUpCard(BackendService backendService, @Qualifier("signUpOverlay") LoginOverlay signUpOverlay, @Qualifier("loginOverlay") LoginOverlay loginOverlay) {
         this.backendService = backendService;
-
+        this.signUpOverlay = signUpOverlay;
+        this.loginOverlay = loginOverlay;
         LoginI18n i18n = LoginI18n.createDefault();
         LoginI18n.Form i18nForm = i18n.getForm();
         i18nForm.setSubmit("Register");
@@ -76,40 +75,4 @@ public class SignUpCard extends Div {
         signUp.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         add(signUp);
     }
-
-    // Registration method
-//    private boolean register(RegistrationDTO registrationDTO) {
-//        try {
-//            // Create URL
-//            URL url = new URL("http://localhost:8080/api/v1/register");
-//
-//            // Create connection
-//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//            connection.setRequestMethod("POST");
-//            connection.setRequestProperty("Content-Type", "application/json");
-//            connection.setDoOutput(true);
-//
-//            // Create JSON body
-//            String jsonInputString = objectMapper.writeValueAsString(registrationDTO);
-//
-//            // Write JSON body to request
-//            try (OutputStream os = connection.getOutputStream()) {
-//                byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
-//                os.write(input, 0, input.length);
-//            }
-//
-//            // Read the response
-//            int responseCode = connection.getResponseCode();
-//            if (responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
-//                // Registration successful (204 No Content)
-//                return true;
-//            } else {
-//                // Handle error response
-//                return false;
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
 }
