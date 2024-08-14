@@ -1,5 +1,9 @@
 package com.bigfoot.tenantmonitor.client.pages;
 
+import com.bigfoot.tenantmonitor.client.BackendService;
+import com.bigfoot.tenantmonitor.client.jwt.JwtStore;
+import com.bigfoot.tenantmonitor.client.layout.BaseLayout;
+import com.bigfoot.tenantmonitor.dto.TokenDTO;
 import com.bigfoot.tenantmonitor.dto.LoginDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.UI;
@@ -15,14 +19,17 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class LoginCard extends Div {
+    private final BackendService backendService;
+
     // The ide will complain about not being able to autowire the LoginOverlay, but it's fine
-    public LoginCard(LoginOverlay loginOverlay) {
+    public LoginCard(LoginOverlay loginOverlay, BackendService backendService) {
+        this.backendService = backendService;
         loginOverlay.addLoginListener(e -> {
             LoginDTO loginDTO = new LoginDTO();
             loginDTO.setUserName(e.getUsername());
             loginDTO.setPassword(e.getPassword());
 
-            if (authenticate(loginDTO)) {
+            if (backendService.authenticate(loginDTO)) {
                 Notification.show("Login successful!");
                 // Navigate to main view or another view after successful login
                 UI.getCurrent().navigate("");
@@ -82,10 +89,9 @@ public class LoginCard extends Div {
                     while ((responseLine = br.readLine()) != null) {
                         response.append(responseLine.trim());
                     }
-                    // Assuming the response contains an AccessTokenDTO in JSON format
-                    //AccessTokenDTO uses builder, so you can't use the default constructor
-                    //AccessTokenDTO accessTokenDTO = objectMapper.readValue(response.toString(), AccessTokenDTO.class);
-                    // You can save the token or use it as needed
+
+                    TokenDTO accessTokenDTO = objectMapper.readValue(response.toString(), TokenDTO.class);
+                    JwtStore.setAccessToken(accessTokenDTO.getAccessToken()); //Store JWT
                     return true;
                 }
             } else {

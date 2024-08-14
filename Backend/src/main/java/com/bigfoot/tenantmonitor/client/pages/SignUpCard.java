@@ -1,5 +1,6 @@
 package com.bigfoot.tenantmonitor.client.pages;
 
+import com.bigfoot.tenantmonitor.client.BackendService;
 import com.bigfoot.tenantmonitor.dto.RegistrationDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.UI;
@@ -19,8 +20,12 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class SignUpCard extends Div {
+    private final BackendService backendService;
+
     // The ide will complain about not being able to autowire the LoginOverlay, but it's fine
-    public SignUpCard(LoginOverlay signUpOverlay, LoginOverlay loginOverlay) {
+    public SignUpCard(LoginOverlay signUpOverlay, LoginOverlay loginOverlay, BackendService backendService) {
+        this.backendService = backendService;
+
         LoginI18n i18n = LoginI18n.createDefault();
         LoginI18n.Form i18nForm = i18n.getForm();
         i18nForm.setSubmit("Register");
@@ -46,7 +51,8 @@ public class SignUpCard extends Div {
             registrationDTO.setUserName(e.getUsername());
             registrationDTO.setPassword(e.getPassword());
 
-            if (register(registrationDTO)) {
+
+            if (backendService.register(registrationDTO)) {
                 Notification.show("Registration successful! Please log in.");
                 // Navigate to main view or another view after successful registration
                 UI.getCurrent().navigate("");
@@ -72,39 +78,38 @@ public class SignUpCard extends Div {
     }
 
     // Registration method
-    private boolean register(RegistrationDTO registrationDTO) {
-        try {
-            // Create URL
-            URL url = new URL("http://localhost:8080/api/v1/register");
-
-            // Create connection
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
-
-            // Create JSON body
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jsonInputString = objectMapper.writeValueAsString(registrationDTO);
-
-            // Write JSON body to request
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-
-            // Read the response
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
-                // Registration successful (204 No Content)
-                return true;
-            } else {
-                // Handle error response
-                return false;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+//    private boolean register(RegistrationDTO registrationDTO) {
+//        try {
+//            // Create URL
+//            URL url = new URL("http://localhost:8080/api/v1/register");
+//
+//            // Create connection
+//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//            connection.setRequestMethod("POST");
+//            connection.setRequestProperty("Content-Type", "application/json");
+//            connection.setDoOutput(true);
+//
+//            // Create JSON body
+//            String jsonInputString = objectMapper.writeValueAsString(registrationDTO);
+//
+//            // Write JSON body to request
+//            try (OutputStream os = connection.getOutputStream()) {
+//                byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
+//                os.write(input, 0, input.length);
+//            }
+//
+//            // Read the response
+//            int responseCode = connection.getResponseCode();
+//            if (responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
+//                // Registration successful (204 No Content)
+//                return true;
+//            } else {
+//                // Handle error response
+//                return false;
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 }

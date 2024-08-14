@@ -22,10 +22,11 @@ public class NavBar extends HorizontalLayout {
         Button about = new Button("About", e -> UI.getCurrent().navigate("about"));
         Button contact = new Button("Contact", e -> UI.getCurrent().navigate("contact"));
         Button properties = new Button("Properties", e -> UI.getCurrent().navigate("properties"));
+        Button test = new Button("Test", e -> UI.getCurrent().navigate("endpointTest"));
 
         setWidthFull();
         setPadding(true);
         setJustifyContentMode(FlexComponent.JustifyContentMode.EVENLY);
-        add(home, about, contact, properties, signUpCard, loginCard);
+        add(home, about, contact, test, properties, signUpCard, loginCard);
     }
 }
