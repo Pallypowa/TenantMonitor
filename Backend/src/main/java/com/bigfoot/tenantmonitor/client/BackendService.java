@@ -5,7 +5,6 @@ import com.bigfoot.tenantmonitor.dto.PropertyDTO;
 import com.bigfoot.tenantmonitor.dto.TokenDTO;
 import com.bigfoot.tenantmonitor.dto.LoginDTO;
 import com.bigfoot.tenantmonitor.dto.RegistrationDTO;
-import com.bigfoot.tenantmonitor.model.Property;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;

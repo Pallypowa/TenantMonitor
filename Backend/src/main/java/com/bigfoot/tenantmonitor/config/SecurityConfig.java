@@ -28,8 +28,13 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/api/v1/login",
             "/api/v1/register",
-            "/api/v1/refresh",
-            "/public/**"
+            "/api/v1/refresh/*",
+            // -- Vaadin testing stuff
+            "/VAADIN/**",
+            "/frontend/**",
+            "/PUSH/**",
+            "/UIDL/**",
+            "/"
 //            "**" //TODO: figure out how does this work with vaadin TODO continue: idk
     };
 

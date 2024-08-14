@@ -27,6 +27,7 @@ public class JwtInterceptor implements ClientHttpRequestInterceptor {
         ClientHttpResponse response = execution.execute(request, body);
 
         if(response.getStatusCode().is4xxClientError()){
+            System.out.println("Getting refresh token");
             //fetch new token && send request again
             String refreshToken = jwtTokenService.refreshToken(JwtStore.getRefreshToken());
             request.getHeaders().setBearerAuth(refreshToken);
