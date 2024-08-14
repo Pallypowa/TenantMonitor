@@ -11,7 +11,8 @@ public class NavBar extends HorizontalLayout {
         Button contact = new Button("Contact", e -> UI.getCurrent().navigate("contact"));
         Button signUp = new Button("Sign Up", e -> UI.getCurrent().navigate("signup"));
         Button login = new Button("Login", e -> UI.getCurrent().navigate("login"));
+        Button test = new Button("Test", e -> UI.getCurrent().navigate("endpointTest"));
 
-        add(home, about, contact, signUp, login);
+        add(home, about, contact, signUp, login, test);
     }
 }

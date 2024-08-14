@@ -1,14 +1,12 @@
 package com.bigfoot.tenantmonitor.rest;
 
 import com.bigfoot.tenantmonitor.dto.AccessTokenDTO;
+import com.bigfoot.tenantmonitor.dto.TokenDTO;
 import com.bigfoot.tenantmonitor.dto.LoginDTO;
 import com.bigfoot.tenantmonitor.dto.RegistrationDTO;
 import com.bigfoot.tenantmonitor.service.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(AuthController.API_ENDPOINT)
@@ -21,9 +19,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AccessTokenDTO> login(@RequestBody LoginDTO loginDTO){
+    public ResponseEntity<TokenDTO> login(@RequestBody LoginDTO loginDTO){
         try {
-            AccessTokenDTO accessToken = authService.login(loginDTO);
+            TokenDTO accessToken = authService.login(loginDTO);
             return ResponseEntity.ok(accessToken);
         }catch (RuntimeException ex){
             return ResponseEntity.badRequest().build();
@@ -34,5 +32,11 @@ public class AuthController {
     public ResponseEntity<Void> register(@RequestBody RegistrationDTO registrationDTO){
         authService.register(registrationDTO);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/refresh/{refreshToken}")
+    public ResponseEntity<AccessTokenDTO> refresh(@PathVariable String refreshToken){
+        AccessTokenDTO accessToken = authService.refresh(refreshToken);
+        return ResponseEntity.ok(accessToken);
     }
 }

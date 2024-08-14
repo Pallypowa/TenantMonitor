@@ -28,9 +28,10 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/api/v1/login",
             "/api/v1/register",
-            "**" //TODO: figure out how does this work with vaadin
+            "/api/v1/refresh",
+            "/public/**"
+//            "**" //TODO: figure out how does this work with vaadin TODO continue: idk
     };
-    // other public endpoints of your API may be appended to this array
 
     public SecurityConfig(AuthenticationProvider authenticationProvider, JwtAuthFilter jwtAuthenticationFilter) {
         this.authenticationProvider = authenticationProvider;

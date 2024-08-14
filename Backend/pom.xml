@@ -80,6 +80,7 @@
             <artifactId>vaadin-spring-boot-starter</artifactId>
             <version>24.4.6</version>
         </dependency>
+
     </dependencies>
 
     <build>

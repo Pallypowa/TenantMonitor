@@ -1,6 +1,7 @@
 package com.bigfoot.tenantmonitor.service;
 
 import com.bigfoot.tenantmonitor.dto.AccessTokenDTO;
+import com.bigfoot.tenantmonitor.dto.TokenDTO;
 import com.bigfoot.tenantmonitor.dto.LoginDTO;
 import com.bigfoot.tenantmonitor.dto.RegistrationDTO;
 import com.bigfoot.tenantmonitor.jwt.JwtService;
@@ -22,8 +23,10 @@ public class AuthService {
     private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    @Value("${application.security.jwt.expiration-time}")
-    private Integer expiresIn;
+    @Value("${application.security.jwt.access_token_expiration}")
+    private Integer accessTokenExpire;
+    @Value("${application.security.jwt.refresh_token_expiration}")
+    private Integer refreshTokenExpire;
 
     public AuthService(UserRepository ownerRepository, ModelMapper modelMapper, BCryptPasswordEncoder passwordEncoder, JwtService jwtService) {
         this.ownerRepository = ownerRepository;
@@ -41,7 +44,7 @@ public class AuthService {
         owner.setUserType(UserType.OWNER);
         ownerRepository.save(owner);
     }
-    public AccessTokenDTO login(LoginDTO loginDTO){
+    public TokenDTO login(LoginDTO loginDTO){
         Optional<User> user = ownerRepository.findByUserName(loginDTO.getUserName());
 
         if(user.isEmpty()){
@@ -49,10 +52,39 @@ public class AuthService {
         }
 
         if(passwordEncoder.matches(loginDTO.getPassword(), user.get().getPassword())){
-            String accessToken = jwtService.generateToken(user.get());
-             return AccessTokenDTO.builder().accessToken(accessToken).tokenType("Bearer").expiresIn(expiresIn).build();
+            String accessToken = jwtService.generateToken(user.get(), accessTokenExpire);
+            String refreshToken = jwtService.generateToken(user.get(), refreshTokenExpire);
+            return TokenDTO
+                    .builder()
+                    .withAccessToken(accessToken)
+                    .withAccessTokenExpire(accessTokenExpire)
+                    .withRefreshToken(refreshToken)
+                    .withRefreshTokenExpire(refreshTokenExpire)
+                    .build();
         }
 
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect password!");
+    }
+
+    public AccessTokenDTO refresh(String refreshToken) {
+        try {
+            if(!jwtService.isValidToken(refreshToken)){
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        Optional<User> user = ownerRepository.findByUserName(jwtService.getUserName(refreshToken));
+
+        if(user.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist!");
+        }
+
+        return AccessTokenDTO
+                .builder()
+                .withAccessToken(jwtService.generateToken(user.get(), accessTokenExpire))
+                .withAccessTokenExpire(accessTokenExpire)
+                .build();
     }
 }

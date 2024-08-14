@@ -20,8 +20,6 @@ public class JwtService {
 
     @Value("${application.security.jwt.secret-key}")
     private String SECRET_KEY;
-    @Value("${application.security.jwt.expiration-time}")
-    private Integer expirationTime;
 
     public String getUserName(String jwt){
         return extractClaims(jwt, Claims::getSubject);
@@ -44,11 +42,11 @@ public class JwtService {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(jwt).getBody();
     }
 
-    public String generateToken(UserDetails userDetails){
+    public String generateToken(UserDetails userDetails, Integer expiration){
         return Jwts
                 .builder()
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .setSubject(userDetails.getUsername())
                 .signWith(SignatureAlgorithm.HS256,SECRET_KEY)
                 .compact();

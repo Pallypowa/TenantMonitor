@@ -7,9 +7,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
+//Have to add these so that the objectMapper can parse the value.
+// For some reason it expects a "with" prefix for the methods.
 @Builder(setterPrefix = "with")
-@JsonDeserialize(builder = AccessTokenDTO.AccessTokenDTOBuilder.class)
-public class AccessTokenDTO {
+@JsonDeserialize(builder = TokenDTO.TokenDTOBuilder.class)
+public class TokenDTO {
     private String accessToken;
     private int accessTokenExpire;
+    private String refreshToken;
+    private int refreshTokenExpire;
 }
