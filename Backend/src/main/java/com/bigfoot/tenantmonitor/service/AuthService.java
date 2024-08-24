@@ -4,10 +4,14 @@ import com.bigfoot.tenantmonitor.dto.AccessTokenDTO;
 import com.bigfoot.tenantmonitor.dto.TokenDTO;
 import com.bigfoot.tenantmonitor.dto.LoginDTO;
 import com.bigfoot.tenantmonitor.dto.RegistrationDTO;
+import com.bigfoot.tenantmonitor.exception.InvalidTokenException;
+import com.bigfoot.tenantmonitor.exception.UserAlreadyExistsException;
+import com.bigfoot.tenantmonitor.exception.IncorrectLoginException;
 import com.bigfoot.tenantmonitor.jwt.JwtService;
 import com.bigfoot.tenantmonitor.model.User;
 import com.bigfoot.tenantmonitor.model.UserType;
 import com.bigfoot.tenantmonitor.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -37,7 +41,7 @@ public class AuthService {
     public void register(RegistrationDTO registrationDTO){
         Optional<User> user = ownerRepository.findByUserNameOrEmail(registrationDTO.getUserName(), registrationDTO.getEmail());
         if(user.isPresent()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists!");
+            throw new UserAlreadyExistsException("User already exists!");
         }
         User owner = modelMapper.map(registrationDTO, User.class);
         owner.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
@@ -48,7 +52,7 @@ public class AuthService {
         Optional<User> user = ownerRepository.findByUserName(loginDTO.getUserName());
 
         if(user.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist!");
+            throw new IncorrectLoginException("Username or password incorrect!");
         }
 
         if(passwordEncoder.matches(loginDTO.getPassword(), user.get().getPassword())){
@@ -63,22 +67,19 @@ public class AuthService {
                     .build();
         }
 
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect password!");
+        throw new IncorrectLoginException("Username or password incorrect!");
     }
 
     public AccessTokenDTO refresh(String refreshToken) {
-        try {
-            if(!jwtService.isValidToken(refreshToken)){
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-            }
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+        if(!jwtService.isValidToken(refreshToken)){
+            throw new InvalidTokenException("Invalid JWT.");
         }
 
         Optional<User> user = ownerRepository.findByUserName(jwtService.getUserName(refreshToken));
 
         if(user.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist!");
+            throw new InvalidTokenException("Invalid JWT.");
         }
 
         return AccessTokenDTO

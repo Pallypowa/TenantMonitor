@@ -1,4 +1,4 @@
-package com.bigfoot.tenantmonitor.rest;
+package com.bigfoot.tenantmonitor.controller;
 
 import com.bigfoot.tenantmonitor.dto.PropertyDTO;
 import com.bigfoot.tenantmonitor.dto.TenantDTO;
