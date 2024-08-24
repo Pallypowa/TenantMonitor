@@ -2,6 +2,8 @@ package com.bigfoot.tenantmonitor.service;
 
 import com.bigfoot.tenantmonitor.dto.PropertyDTO;
 import com.bigfoot.tenantmonitor.dto.TenantDTO;
+import com.bigfoot.tenantmonitor.exception.ErrorCode;
+import com.bigfoot.tenantmonitor.exception.PropertyException;
 import com.bigfoot.tenantmonitor.model.Property;
 import com.bigfoot.tenantmonitor.model.User;
 import com.bigfoot.tenantmonitor.repository.PropertyRepository;
@@ -48,7 +50,7 @@ public class MainService {
         Optional<Property> property = propertyRepository.findById(propertyId);
 
         if(property.isEmpty()){
-            throw new RuntimeException("Property does not exist!");
+            throw new PropertyException(ErrorCode.PropertyDoesNotExist, "Property does not exist!");
         }
 
         updatedProperty.setId(propertyId);
@@ -66,7 +68,7 @@ public class MainService {
         Property property = getProperty(propertyId);
 
         if(!isPropertyFree(property)){
-            throw new RuntimeException("Property is already taken");
+            throw new PropertyException(ErrorCode.PropertyAlreadyTaken, "Property is already taken!");
         }
 
         User user = modelMapper.map(tenant, User.class);
@@ -83,7 +85,7 @@ public class MainService {
         Optional<Property> property = propertyRepository.findById(propertyId);
 
         if(property.isEmpty()){
-            throw new RuntimeException("Property does not exist!");
+            throw new PropertyException(ErrorCode.PropertyDoesNotExist, "Property does not exist!");
         }
         return property.get();
     }

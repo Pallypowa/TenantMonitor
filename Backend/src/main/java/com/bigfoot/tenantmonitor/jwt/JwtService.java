@@ -52,12 +52,12 @@ public class JwtService {
                 .compact();
     }
 
-    public boolean isValidToken(String jwt) throws Exception {
+    public boolean isValidToken(String jwt){
         try{
             Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(jwt).getBody();
             return !isExpired(jwt);
         }catch(Exception e){
-            throw new SignatureException("Signature Exception");
+            return false;
         }
 
     }

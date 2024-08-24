@@ -1,6 +1,7 @@
 package com.bigfoot.tenantmonitor.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,8 +13,12 @@ import lombok.Setter;
 @Builder(setterPrefix = "with")
 @JsonDeserialize(builder = TokenDTO.TokenDTOBuilder.class)
 public class TokenDTO {
+    @NotBlank
     private String accessToken;
+    @NotBlank
     private int accessTokenExpire;
+    @NotBlank
     private String refreshToken;
+    @NotBlank
     private int refreshTokenExpire;
 }

@@ -1,9 +1,11 @@
 package com.bigfoot.tenantmonitor.jwt;
 
+import com.bigfoot.tenantmonitor.exception.InvalidTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+
 import java.io.IOException;
 
 
@@ -23,10 +27,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final HandlerExceptionResolver resolver;
 
-    public JwtAuthFilter(JwtService jwtService, UserDetailsService userDetailsService) {
+    public JwtAuthFilter(JwtService jwtService, UserDetailsService userDetailsService, @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
+        this.resolver = resolver;
     }
 
 
@@ -43,29 +49,34 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         String jwt = header.substring(7);
-        String userName = jwtService.getUserName(jwt);
-
-        if(userName == null){
-            filterChain.doFilter(request,response);
+        String userName;
+        try {
+            userName = jwtService.getUserName(jwt);
+            if(userName == null){
+                filterChain.doFilter(request,response);
+                return;
+            }
+        } catch (Exception e){
+            resolver.resolveException(request, response, null, new InvalidTokenException("Invalid JWT!"));
             return;
         }
 
 
-        try {
-            if(jwtService.isValidToken(jwt)){
-                UserContext.setUserName(userName);
-                //Get current user based on JWT
-                UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
 
-                //Set user to SecurityContextHolder authentication to set the current user as "Logged in"
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        if(!jwtService.isValidToken(jwt)){
+            resolver.resolveException(request, response, null, new InvalidTokenException("Invalid JWT!"));
+            return;
         }
+
+        UserContext.setUserName(userName);
+        //Get current user based on JWT
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+
+        //Set user to SecurityContextHolder authentication to set the current user as "Logged in"
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
         filterChain.doFilter(request, response);
     }

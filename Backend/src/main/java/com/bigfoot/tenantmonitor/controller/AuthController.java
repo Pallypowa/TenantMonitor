@@ -1,10 +1,11 @@
-package com.bigfoot.tenantmonitor.rest;
+package com.bigfoot.tenantmonitor.controller;
 
 import com.bigfoot.tenantmonitor.dto.AccessTokenDTO;
 import com.bigfoot.tenantmonitor.dto.TokenDTO;
 import com.bigfoot.tenantmonitor.dto.LoginDTO;
 import com.bigfoot.tenantmonitor.dto.RegistrationDTO;
 import com.bigfoot.tenantmonitor.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,16 +21,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenDTO> login(@RequestBody LoginDTO loginDTO){
-        try {
-            TokenDTO accessToken = authService.login(loginDTO);
-            return ResponseEntity.ok(accessToken);
-        }catch (RuntimeException ex){
-            return ResponseEntity.badRequest().build();
-        }
+        TokenDTO accessToken = authService.login(loginDTO);
+        return ResponseEntity.ok(accessToken);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegistrationDTO registrationDTO){
+    public ResponseEntity<Void> register(@Valid @RequestBody RegistrationDTO registrationDTO){
         authService.register(registrationDTO);
         return ResponseEntity.noContent().build();
     }
