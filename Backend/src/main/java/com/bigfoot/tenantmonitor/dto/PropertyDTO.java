@@ -1,5 +1,6 @@
 package com.bigfoot.tenantmonitor.dto;
 
+import com.bigfoot.tenantmonitor.model.FileMapping;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -35,24 +37,6 @@ public class PropertyDTO {
     private boolean isFurnished;
     private String propertyType;
     private TenantDTO tenant;
+    private List<FileMapping> files;
 
-    @Override
-    public String toString() {
-        return "PropertyDTO{" +
-                "id=" + id +
-                ", ownerId=" + ownerId +
-                ", tenantId=" + tenantId +
-                ", name='" + name + '\'' +
-                ", zipcode=" + zipcode +
-                ", street='" + street + '\'' +
-                ", size=" + size +
-                ", storey=" + storey +
-                ", houseNumber=" + houseNumber +
-                ", price=" + price +
-                ", isFree=" + isFree +
-                ", isFurnished=" + isFurnished +
-                ", propertyType='" + propertyType + '\'' +
-                ", tenant=" + tenant +
-                '}';
-    }
 }

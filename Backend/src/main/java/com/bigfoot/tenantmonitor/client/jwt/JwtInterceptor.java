@@ -1,6 +1,7 @@
 package com.bigfoot.tenantmonitor.client.jwt;
 
 import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
@@ -25,8 +26,8 @@ public class JwtInterceptor implements ClientHttpRequestInterceptor {
         request.getHeaders().setBearerAuth(JwtStore.getAccessToken());
 
         ClientHttpResponse response = execution.execute(request, body);
-
-        if(response.getStatusCode().is4xxClientError()){
+        HttpStatusCode statusCode = response.getStatusCode();
+        if(statusCode.isSameCodeAs(HttpStatusCode.valueOf(401)) || statusCode.isSameCodeAs(HttpStatusCode.valueOf(403))){
             System.out.println("Getting refresh token");
             //fetch new token && send request again
             String refreshToken = jwtTokenService.refreshToken(JwtStore.getRefreshToken());
