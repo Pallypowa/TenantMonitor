@@ -132,4 +132,20 @@ public class BackendService {
                 .uri(String.format("/api/v1/file/%s", fileId))
                 .retrieve();
     }
+
+    public PropertyDTO getProperty(String propertyId){
+        try {
+            ResponseEntity<PropertyDTO> property = restClient
+                    .get()
+                    .uri("/api/v1/property/" + propertyId)
+                    .retrieve()
+                    .toEntity(PropertyDTO.class);
+            return property.getBody();
+        } catch (HttpClientErrorException e){
+            System.out.printf("Token expired %s", e.getStatusCode());
+        } catch (HttpServerErrorException e){
+            System.out.printf("Fetch failed... server error %s", e.getStatusCode());
+        }
+        return null;
+    }
 }
