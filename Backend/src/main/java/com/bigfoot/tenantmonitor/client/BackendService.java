@@ -1,10 +1,10 @@
 package com.bigfoot.tenantmonitor.client;
 
 import com.bigfoot.tenantmonitor.client.jwt.JwtStore;
-import com.bigfoot.tenantmonitor.dto.PropertyDTO;
-import com.bigfoot.tenantmonitor.dto.TokenDTO;
 import com.bigfoot.tenantmonitor.dto.LoginDTO;
+import com.bigfoot.tenantmonitor.dto.PropertyDTO;
 import com.bigfoot.tenantmonitor.dto.RegistrationDTO;
+import com.bigfoot.tenantmonitor.dto.TokenDTO;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.InputStreamResource;
@@ -18,7 +18,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClient;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
