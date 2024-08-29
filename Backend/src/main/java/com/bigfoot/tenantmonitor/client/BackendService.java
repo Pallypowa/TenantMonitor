@@ -1,19 +1,24 @@
 package com.bigfoot.tenantmonitor.client;
 
 import com.bigfoot.tenantmonitor.client.jwt.JwtStore;
-import com.bigfoot.tenantmonitor.dto.PropertyDTO;
-import com.bigfoot.tenantmonitor.dto.TokenDTO;
 import com.bigfoot.tenantmonitor.dto.LoginDTO;
+import com.bigfoot.tenantmonitor.dto.PropertyDTO;
 import com.bigfoot.tenantmonitor.dto.RegistrationDTO;
+import com.bigfoot.tenantmonitor.dto.TokenDTO;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClient;
 
+import java.io.InputStream;
 import java.util.List;
 
 
@@ -83,4 +88,48 @@ public class BackendService {
         return List.of();
     }
 
+    public void uploadFile(InputStream fileData, String fileName, long contentLength, String mimeType, String propertyId) {
+        try{
+            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+            InputStreamResource inputStreamResource = new InputStreamResource(fileData) {
+                @Override
+                public String getFilename() {
+                    return fileName;
+                }
+
+                @Override
+                public long contentLength() {
+                    return contentLength;
+                }
+            };
+            body.add("file", inputStreamResource);
+            restClient
+                .post()
+                .uri(String.format("/api/v1/file?objectId=%s", propertyId))
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(body)
+                .retrieve()
+                .toBodilessEntity();
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+
+    }
+
+    public ResponseEntity<Resource> getFile(String fileId){
+        return restClient
+                .get()
+                .uri(String.format("/api/v1/file/%s", fileId))
+                .retrieve()
+                .toEntity(Resource.class);
+
+    }
+
+    public RestClient.ResponseSpec deleteFile(String fileId){
+        return restClient
+                .delete()
+                .uri(String.format("/api/v1/file/%s", fileId))
+                .retrieve();
+    }
 }

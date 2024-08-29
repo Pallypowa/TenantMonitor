@@ -3,6 +3,7 @@ package com.bigfoot.tenantmonitor.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.UUID;
@@ -10,6 +11,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@ToString
 public class Property {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -31,5 +33,6 @@ public class Property {
     private int price;
     private boolean isFurnished;
     private String propertyType;
-
+    @OneToMany(mappedBy = "object_id", fetch = FetchType.EAGER)
+    private List<FileMapping> files;
 }

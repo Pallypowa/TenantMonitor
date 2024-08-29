@@ -4,10 +4,13 @@ import com.bigfoot.tenantmonitor.dto.PropertyDTO;
 import com.bigfoot.tenantmonitor.dto.TenantDTO;
 import com.bigfoot.tenantmonitor.exception.ErrorCode;
 import com.bigfoot.tenantmonitor.exception.PropertyException;
+import com.bigfoot.tenantmonitor.model.FileMapping;
 import com.bigfoot.tenantmonitor.model.Property;
 import com.bigfoot.tenantmonitor.model.User;
+import com.bigfoot.tenantmonitor.repository.FileMappingRepository;
 import com.bigfoot.tenantmonitor.repository.PropertyRepository;
 import com.bigfoot.tenantmonitor.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +24,16 @@ public class MainService {
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final FileMappingRepository fileMappingRepository;
 
-    public MainService(PropertyRepository propertyRepository, UserRepository userRepository, ModelMapper modelMapper) {
+    public MainService(PropertyRepository propertyRepository,
+                       UserRepository userRepository,
+                       ModelMapper modelMapper,
+                       FileMappingRepository fileMappingRepository) {
         this.propertyRepository = propertyRepository;
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
+        this.fileMappingRepository = fileMappingRepository;
     }
 
     public List<PropertyDTO> fetchAllProperties() {
@@ -33,6 +41,7 @@ public class MainService {
                 .findAll()
                 .stream()
                 .map(property -> modelMapper.map(property, PropertyDTO.class))
+                //.peek(propertyDTO -> propertyDTO.setFiles(getFilesForProperty(propertyDTO.getId())))
                 .toList();
     }
 
@@ -88,5 +97,9 @@ public class MainService {
             throw new PropertyException(ErrorCode.PropertyDoesNotExist, "Property does not exist!");
         }
         return property.get();
+    }
+
+    private List<FileMapping> getFilesForProperty(UUID id){
+        return fileMappingRepository.findAll().stream().filter(fileMapping -> fileMapping.getObject_id().equals(id)).toList();
     }
 }

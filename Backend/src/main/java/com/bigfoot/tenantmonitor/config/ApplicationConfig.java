@@ -1,7 +1,11 @@
 package com.bigfoot.tenantmonitor.config;
 
 import com.bigfoot.tenantmonitor.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.minio.MinioClient;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -50,5 +54,14 @@ public class ApplicationConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
 
         return authProvider;
+    }
+
+    @Bean
+    public MinioClient minioClient(){
+        return new MinioClient
+                .Builder()
+                .endpoint("http://127.0.0.1:9000")
+                .credentials("tenantmonitor", "devpassword") //Put these out to the properties...
+                .build();
     }
 }
