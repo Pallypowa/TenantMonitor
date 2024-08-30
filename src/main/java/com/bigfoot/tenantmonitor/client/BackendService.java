@@ -148,4 +148,24 @@ public class BackendService {
         }
         return null;
     }
+
+    public void updateProperty(PropertyDTO propertyDTO){
+        return;
+        /*
+        try {
+            restClient
+                    .put()
+                    .uri("/api/v1/property")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(propertyDTO)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .getStatusCode().is2xxSuccessful();
+        } catch (HttpClientErrorException e){
+            System.out.printf("Token expired %s", e.getStatusCode());
+        } catch (HttpServerErrorException e){
+            System.out.printf("Save failed... server error %s", e.getStatusCode());
+        }
+        */
+    }
 }
