@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(AuthController.API_ENDPOINT)
+@CrossOrigin(origins = "*", allowedHeaders = "*") //TODO
 public class AuthController {
     public static final String API_ENDPOINT = "/api/v1";
     private final AuthService authService;
