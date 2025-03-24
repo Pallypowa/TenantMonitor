@@ -32,7 +32,7 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/refresh/{refreshToken}")
+    @PostMapping("/refresh/{refreshToken}") //TODO: refactor path variable to authorization header like an authenticated request. with this the refresh, and access tokens should be seperated as well.
     public ResponseEntity<AccessTokenDTO> refresh(@PathVariable String refreshToken){
         AccessTokenDTO accessToken = authService.refresh(refreshToken);
         return ResponseEntity.ok(accessToken);
