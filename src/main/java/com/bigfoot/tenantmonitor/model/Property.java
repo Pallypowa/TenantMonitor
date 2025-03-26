@@ -37,11 +37,7 @@ public class Property {
     private int houseNumber;
     private int price;
     private boolean isFurnished;
-    @ManyToOne
-    @JoinColumn(name = "property_type_id", nullable = false)
     private PropertyType propertyType;
-    @ManyToOne
-    @JoinColumn(name = "property_sub_type_id", nullable = false)
     private PropertySubType propertySubType;
     @Enumerated(EnumType.STRING)
     private PropertyCondition propertyCondition;

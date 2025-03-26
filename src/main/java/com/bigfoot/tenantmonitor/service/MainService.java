@@ -11,14 +11,19 @@ import com.bigfoot.tenantmonitor.repository.FileMappingRepository;
 import com.bigfoot.tenantmonitor.repository.PropertyRepository;
 import com.bigfoot.tenantmonitor.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class MainService {
 
     private final PropertyRepository propertyRepository;
@@ -26,22 +31,14 @@ public class MainService {
     private final ModelMapper modelMapper;
     private final FileMappingRepository fileMappingRepository;
 
-    public MainService(PropertyRepository propertyRepository,
-                       UserRepository userRepository,
-                       ModelMapper modelMapper,
-                       FileMappingRepository fileMappingRepository) {
-        this.propertyRepository = propertyRepository;
-        this.userRepository = userRepository;
-        this.modelMapper = modelMapper;
-        this.fileMappingRepository = fileMappingRepository;
-    }
-
     public List<PropertyDTO> fetchAllProperties() {
+        final User user = userRepository.findByUserName(getLoggedInUserName()).orElseThrow();
+
         return propertyRepository
                 .findAll()
                 .stream()
+                .filter(property -> property.getOwner().getId().equals(user.getId()))
                 .map(property -> modelMapper.map(property, PropertyDTO.class))
-                //.peek(propertyDTO -> propertyDTO.setFiles(getFilesForProperty(propertyDTO.getId())))
                 .toList();
     }
 
@@ -51,15 +48,21 @@ public class MainService {
     }
 
     public void createProperty(PropertyDTO property) {
+        final User user = userRepository.findByUserName(getLoggedInUserName()).orElseThrow();
+        if(property.getOwnerId() != null) {
+            throw new RuntimeException("Owner id has to be null");
+        }
+        property.setOwnerId(user.getId());
         propertyRepository.save(modelMapper.map(property, Property.class));
     }
 
 
     public PropertyDTO updateProperty(UUID propertyId, PropertyDTO updatedProperty) {
-        Optional<Property> property = propertyRepository.findById(propertyId);
+        final User user = userRepository.findByUserName(getLoggedInUserName()).orElseThrow();
+        final Property property = getProperty(propertyId);
 
-        if(property.isEmpty()){
-            throw new PropertyException(ErrorCode.PropertyDoesNotExist, "Property does not exist!");
+        if(!property.getOwner().getId().equals(user.getId())) {
+            throw new RuntimeException("Can't update!");
         }
 
         updatedProperty.setId(propertyId);
@@ -69,12 +72,23 @@ public class MainService {
     }
 
     public void deleteProperty(UUID propertyId) {
-        Property property = getProperty(propertyId);
+        final User user = userRepository.findByUserName(getLoggedInUserName()).orElseThrow();
+        final Property property = getProperty(propertyId);
+
+        if(!property.getOwner().getId().equals(user.getId())) {
+            throw new RuntimeException("Can't delete!");
+        }
+
         propertyRepository.delete(property);
     }
 
     public void createTenant(UUID propertyId, TenantDTO tenant) {
+        final User loggedInUser = userRepository.findByUserName(getLoggedInUserName()).orElseThrow();
         Property property = getProperty(propertyId);
+
+        if(!property.getOwner().getId().equals(loggedInUser.getId())) {
+            throw new RuntimeException("Can't update!");
+        }
 
         if(!isPropertyFree(property)){
             throw new PropertyException(ErrorCode.PropertyAlreadyTaken, "Property is already taken!");
@@ -101,5 +115,9 @@ public class MainService {
 
     private List<FileMapping> getFilesForProperty(UUID id){
         return fileMappingRepository.findAll().stream().filter(fileMapping -> fileMapping.getObject_id().equals(id)).toList();
+    }
+
+    private String getLoggedInUserName() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }

@@ -3,15 +3,18 @@ package com.bigfoot.tenantmonitor.controller;
 import com.bigfoot.tenantmonitor.dto.PropertyDTO;
 import com.bigfoot.tenantmonitor.dto.TenantDTO;
 import com.bigfoot.tenantmonitor.service.MainService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/property")
+@SecurityRequirement(name = "jwt")
 public class MainController {
     private final MainService propertyService;
 
