@@ -24,14 +24,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IncorrectLoginException.class)
     public ResponseEntity<ErrorResponseDTO> handleIncorrectLogin(IncorrectLoginException e){
         return ResponseEntity
-                .badRequest()
+                .status(401)
                 .body(buildErrorResponse(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED, e.getErrorCodes().getErrorCode()));
     }
 
     @ExceptionHandler(InvalidTokenException.class)
     public ResponseEntity<ErrorResponseDTO> handleInvalidToken(InvalidTokenException e){
         return ResponseEntity
-                .badRequest()
+                .status(401)
                 .body(buildErrorResponse(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED, e.getErrorCodes().getErrorCode()));
     }
 
