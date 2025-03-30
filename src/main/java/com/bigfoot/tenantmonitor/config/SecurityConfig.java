@@ -32,11 +32,7 @@ public class SecurityConfig {
             "/api/v1/login",
             "/api/v1/register",
             "/api/v1/refresh/*",
-            // -- Vaadin testing stuff
-            "/VAADIN/**",
-            "/frontend/**",
-            "/PUSH/**",
-            "/UIDL/**",
+            "/api/v1/verify*",
             "/",
             "/api/v1/file*",
             "/api/v1/property/file/*"

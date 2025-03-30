@@ -42,6 +42,22 @@ public class GlobalExceptionHandler {
                 .body(buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, e.getErrorCodes().getErrorCode()));
     }
 
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleUserNotFound(UserNotFoundException e){
+        return ResponseEntity
+                .badRequest()
+                .body(buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, e.getErrorCodes().getErrorCode()));
+    }
+
+
+    @ExceptionHandler(VerificationTokenInvalidException.class)
+    public ResponseEntity<ErrorResponseDTO> handleVerificationTokenInvalid(VerificationTokenInvalidException e){
+        return ResponseEntity
+                .badRequest()
+                .body(buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, e.getErrorCodes().getErrorCode()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDTO> handleValidity(MethodArgumentNotValidException e){
         return ResponseEntity

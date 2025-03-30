@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +28,9 @@ public class User implements UserDetails {
     private UserType userType;
     @OneToMany(mappedBy = "owner")
     private List<Property> properties;
+    private Boolean verified;
+    private String verificationCode;
+    private LocalDateTime verificationCodeExpires;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -55,6 +59,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return verified;
     }
 }

@@ -6,7 +6,10 @@ public enum ErrorCode {
     InvalidToken(1002),
     PropertyDoesNotExist(1003),
     PropertyAlreadyTaken(1004),
-    ValidityError(1005);
+    ValidityError(1005),
+    UserNotFound(1006),
+    VerificationTokenInvalid(1007)
+    ;
 
     private final Integer errorCode;
 
