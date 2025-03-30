@@ -54,6 +54,7 @@ public class EmailService {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
+        helper.setFrom("${spring.mail.username}");
         helper.setTo(email);
         helper.setSubject(SUBJECT);
         helper.setText(TEXT.formatted(verificationCode), true);
