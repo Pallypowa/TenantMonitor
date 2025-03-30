@@ -7,10 +7,12 @@ import com.bigfoot.tenantmonitor.model.User;
 import com.bigfoot.tenantmonitor.model.UserType;
 import com.bigfoot.tenantmonitor.repository.UserRepository;
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailAuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,7 @@ public class AuthService {
     @Value("${application.security.jwt.refresh_token_expiration}")
     private Integer refreshTokenExpire;
 
+    @Transactional
     public void register(RegistrationDTO registrationDTO){
         Optional<User> user = userRepository.findByUserNameOrEmail(registrationDTO.getUserName(), registrationDTO.getEmail());
         if(user.isPresent()){
@@ -46,7 +49,7 @@ public class AuthService {
 
         try {
             emailService.sendVerificationEmail(savedOwner.getEmail(), savedOwner.getVerificationCode());
-        } catch (MessagingException e) {
+        } catch (MessagingException | MailAuthenticationException e) {
             throw new RuntimeException(e);
         }
     }
