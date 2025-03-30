@@ -4,20 +4,17 @@ import com.bigfoot.tenantmonitor.dto.PropertyDTO;
 import com.bigfoot.tenantmonitor.dto.TenantDTO;
 import com.bigfoot.tenantmonitor.exception.ErrorCode;
 import com.bigfoot.tenantmonitor.exception.PropertyException;
+import com.bigfoot.tenantmonitor.jwt.UserContext;
 import com.bigfoot.tenantmonitor.model.FileMapping;
 import com.bigfoot.tenantmonitor.model.Property;
 import com.bigfoot.tenantmonitor.model.User;
 import com.bigfoot.tenantmonitor.repository.FileMappingRepository;
 import com.bigfoot.tenantmonitor.repository.PropertyRepository;
 import com.bigfoot.tenantmonitor.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -118,6 +115,6 @@ public class MainService {
     }
 
     private String getLoggedInUserName() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+        return UserContext.getUserName();
     }
 }
