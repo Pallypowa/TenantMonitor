@@ -5,6 +5,7 @@ import com.bigfoot.tenantmonitor.dto.TokenDTO;
 import com.bigfoot.tenantmonitor.dto.LoginDTO;
 import com.bigfoot.tenantmonitor.dto.RegistrationDTO;
 import com.bigfoot.tenantmonitor.service.AuthService;
+import com.bigfoot.tenantmonitor.service.EmailVerificationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     public static final String API_ENDPOINT = "/api/v1";
     private final AuthService authService;
+    private final EmailVerificationService emailVerificationService;
 
     @PostMapping("/login")
     public ResponseEntity<TokenDTO> login(@RequestBody LoginDTO loginDTO){
@@ -38,6 +40,11 @@ public class AuthController {
 
     @PostMapping("/verify")
     public void verify(@RequestParam final String email, @RequestParam final String verificationCode) {
-        authService.verify(email, verificationCode);
+        emailVerificationService.verify(email, verificationCode);
+    }
+
+    @PostMapping("/resend")
+    public void resend(@RequestParam final String email) {
+        emailVerificationService.resend(email);
     }
 }

@@ -33,6 +33,7 @@ public class SecurityConfig {
             "/api/v1/register",
             "/api/v1/refresh/*",
             "/api/v1/verify*",
+            "/api/v1/resend*",
             "/",
             "/api/v1/file*",
             "/api/v1/property/file/*"

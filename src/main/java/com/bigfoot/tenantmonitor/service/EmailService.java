@@ -1,18 +1,7 @@
 package com.bigfoot.tenantmonitor.service;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
-import org.springframework.mail.MailAuthenticationException;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
-
-@Service
-@RequiredArgsConstructor
-public class EmailService {
-    private static final String SUBJECT = "Verification code";
-    private static final String TEXT = """
+public interface EmailService {
+    String TEXT = """
             <!DOCTYPE html>
             <html>
               <head>
@@ -47,18 +36,5 @@ public class EmailService {
               </body>
             </html>
             """;
-
-    private final JavaMailSender javaMailSender;
-
-    public void sendVerificationEmail(final String email, final String verificationCode) throws MessagingException, MailAuthenticationException {
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-        helper.setFrom("${spring.mail.username}");
-        helper.setTo(email);
-        helper.setSubject(SUBJECT);
-        helper.setText(TEXT.formatted(verificationCode), true);
-
-        javaMailSender.send(message);
-    }
+    void sendVerificationEmail(final String email, final String verificationCode);
 }
