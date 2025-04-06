@@ -41,7 +41,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-            String header = request.getHeader("Authorization");
+        String header = request.getHeader("Authorization");
 
         if(header == null || !header.startsWith("Bearer") || SecurityContextHolder.getContext().getAuthentication() != null){
             filterChain.doFilter(request,response);
@@ -67,10 +67,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             resolver.resolveException(request, response, null, new InvalidTokenException("Invalid JWT!"));
             return;
         }
-
-        UserContext.setUserName(userName);
         //Get current user based on JWT
         UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+
+        UserContext.setUserName(userName);
 
         //Set user to SecurityContextHolder authentication to set the current user as "Logged in"
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
