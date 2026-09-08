@@ -1,6 +1,8 @@
 package com.bigfoot.tenantmonitor.config;
 
-import com.bigfoot.tenantmonitor.repository.UserRepository;
+import com.bigfoot.tenantmonitor.domain.model.User;
+import com.bigfoot.tenantmonitor.domain.repository.UserRepository;
+
 import io.minio.MinioClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

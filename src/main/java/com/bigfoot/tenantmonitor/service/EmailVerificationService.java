@@ -1,14 +1,14 @@
 package com.bigfoot.tenantmonitor.service;
 
-import com.bigfoot.tenantmonitor.exception.UserNotFoundException;
-import com.bigfoot.tenantmonitor.exception.VerificationTokenInvalidException;
-import com.bigfoot.tenantmonitor.model.User;
-import com.bigfoot.tenantmonitor.repository.UserRepository;
-import jakarta.mail.MessagingException;
+import com.bigfoot.tenantmonitor.domain.exception.UserNotFoundException;
+import com.bigfoot.tenantmonitor.domain.exception.VerificationTokenInvalidException;
+import com.bigfoot.tenantmonitor.domain.model.User;
+import com.bigfoot.tenantmonitor.domain.repository.UserRepository;
+import com.bigfoot.tenantmonitor.service.email.EmailService;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.mail.MailAuthenticationException;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;

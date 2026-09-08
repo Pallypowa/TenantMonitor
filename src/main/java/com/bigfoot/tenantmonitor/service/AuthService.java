@@ -1,13 +1,17 @@
 package com.bigfoot.tenantmonitor.service;
 
-import com.bigfoot.tenantmonitor.dto.*;
-import com.bigfoot.tenantmonitor.exception.IncorrectLoginException;
-import com.bigfoot.tenantmonitor.exception.InvalidTokenException;
-import com.bigfoot.tenantmonitor.exception.UserAlreadyExistsException;
-import com.bigfoot.tenantmonitor.jwt.JwtService;
-import com.bigfoot.tenantmonitor.model.User;
-import com.bigfoot.tenantmonitor.model.UserType;
-import com.bigfoot.tenantmonitor.repository.UserRepository;
+import com.bigfoot.tenantmonitor.domain.exception.IncorrectLoginException;
+import com.bigfoot.tenantmonitor.domain.exception.InvalidTokenException;
+import com.bigfoot.tenantmonitor.domain.exception.UserAlreadyExistsException;
+import com.bigfoot.tenantmonitor.domain.model.User;
+import com.bigfoot.tenantmonitor.domain.model.UserType;
+import com.bigfoot.tenantmonitor.domain.repository.UserRepository;
+import com.bigfoot.tenantmonitor.web.dto.auth.AccessTokenDTO;
+import com.bigfoot.tenantmonitor.web.dto.auth.LoginDTO;
+import com.bigfoot.tenantmonitor.web.dto.auth.RegistrationDTO;
+import com.bigfoot.tenantmonitor.web.dto.auth.TokenDTO;
+import com.bigfoot.tenantmonitor.web.dto.user.UserDTO;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
