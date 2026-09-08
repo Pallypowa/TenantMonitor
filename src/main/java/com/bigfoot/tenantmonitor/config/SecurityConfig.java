@@ -20,14 +20,6 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthenticationFilter;
 
     private static final String[] AUTH_WHITELIST = {
-            // -- Swagger UI v2
-            "/v2/api-docs",
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/swagger-ui.html",
-            // -- Swagger UI v3 (OpenAPI)
-            "/v3/api-docs/**",
-            "/swagger-ui/**",
             "/api/v1/login",
             "/api/v1/register",
             "/api/v1/refresh/*",
